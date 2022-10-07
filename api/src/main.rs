@@ -1,13 +1,12 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
-pub mod routes;
 pub mod nba;
+pub mod routes;
 use routes::*;
-
-
-
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, all_nba_teams])
+    // Mount paths for index and nba routes
+    rocket::build().mount("/", routes![index]).mount("/nba", routes![all_nba_teams,get_team_by_name])
 }
