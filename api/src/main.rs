@@ -1,9 +1,7 @@
 #[macro_use] extern crate rocket;
 
-#[get("/")] 
-fn index() -> &'static str {
-    "Welcome to the NBA teams api"
-}
+pub mod routes;
+use routes::*;
 
 
 #[launch]
