@@ -1,5 +1,4 @@
-
-use rocket::{serde::json::Json, futures::TryStreamExt};
+use rocket::{futures::TryStreamExt, serde::json::Json};
 use types::{NBATeams, NewTeam, Team};
 
 use crate::mongo::Model;
@@ -11,39 +10,17 @@ pub(crate) fn index() -> &'static str {
 
 #[get("/teams")]
 pub(crate) async fn all_nba_teams() -> Json<NBATeams> {
- 
-
     // find all teams  if not just return and empty vec
     let teams = Model::get_all_teams().await;
 
-    println!("{:?}", teams);
-
-    Json(NBATeams {
-        teams,
-    })
+    Json(NBATeams { teams })
 }
 
 #[get("/teams/<name>")]
 pub(crate) async fn get_team_by_name(name: String) -> Result<Json<Team>, String> {
-    let db = Model::get_collection("teams".to_owned()).await;
-
-    let cursor = match db.find(None, None).await {
-        Ok(cursor) => cursor,
-        Err(_) => return Ok(Json(Team::default())),
-    };
-
-    let team = match cursor
-        .try_collect()
-        .await
-        .unwrap_or_else(|_| vec![])
-        .into_iter()
-        .find(|team| team.name.to_lowercase() == name)
-    {
-        Some(team) => Json(team),
-        None => return Err("No team with that name".to_owned()),
-    };
-
-    Ok(team)
+    let team = Model::get_one_team(name).await;
+    
+    Ok(Json(team))
 }
 
 #[post("/teams", format = "application/json", data = "<newteam>")]
@@ -52,8 +29,6 @@ pub async fn make_a_team(newteam: Json<NewTeam>) -> Json<String> {
         name: newteam.name.to_owned(),
         city: newteam.city.to_owned(),
     };
-
-
 
     // random id for new team
     let id = Model::get_length_of_items().await + 1;
