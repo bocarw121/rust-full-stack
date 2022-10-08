@@ -8,8 +8,12 @@ pub struct Team {
 }
 
 impl Team {
-   pub fn default() -> Team {
-        Team { _id: 0, name: "".to_owned(), city: "".to_owned() }
+    pub fn default() -> Team {
+        Team {
+            _id: 0,
+            name: "".to_owned(),
+            city: "".to_owned(),
+        }
     }
 }
 
@@ -20,14 +24,24 @@ pub struct NBATeams {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct NewTeam {
-   pub name: String,
-   pub city: String,
+    pub name: String,
+    pub city: String,
 }
-
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct FavTeam {
-   pub user_name: String,
-   pub team: Team,
+    pub user_name: String,
+    pub team_name: String,
+    pub city: String,
 }
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+pub struct FavTeamWithId {
+    pub _id: u32,
+    pub fav_team: FavTeam
+}
+
+
+
+
 
