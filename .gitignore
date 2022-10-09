@@ -1,3 +1,4 @@
 target
 start.sh
 .env
+dist
