@@ -8,6 +8,7 @@ pub mod team;
 pub mod teams;
 
 pub mod favorite_teams;
+pub mod loader;
 pub mod route;
 
 use favorite_teams::FavoriteTeams;
@@ -31,7 +32,7 @@ fn switch(routes: &Route) -> Html {
 pub fn app() -> Html {
     html! {
       <BrowserRouter>
-      
+
         <NavBar />
         <main>
           <Switch<Route> render={Switch::render(switch)} />
