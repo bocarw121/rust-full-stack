@@ -22,8 +22,8 @@ fn switch(routes: &Route) -> Html {
     match routes {
         Route::Home => html! { <Home/> },
         Route::Teams => html! { <Teams /> },
-        Route::Team { name } => html! { <Team  /> },
         Route::FavoriteTeams => html! { <FavoriteTeams /> },
+        Route::Team { name } => html! { <Team name={name.clone()}  /> },
     }
 }
 
@@ -31,8 +31,11 @@ fn switch(routes: &Route) -> Html {
 pub fn app() -> Html {
     html! {
       <BrowserRouter>
+      
         <NavBar />
-        <Switch<Route> render={Switch::render(switch)} />
+        <main>
+          <Switch<Route> render={Switch::render(switch)} />
+        </main>
       </BrowserRouter>
     }
 }
