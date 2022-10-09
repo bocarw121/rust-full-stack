@@ -7,7 +7,7 @@ pub enum Route {
     #[at["/teams"]]
     Teams,
     #[at["/teams/:name"]]
-    Team { name: String},
+    Team { name: String },
     #[at["/favorite"]]
     FavoriteTeams,
 }
