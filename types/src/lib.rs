@@ -34,14 +34,3 @@ pub struct FavTeam {
     pub team_name: String,
     pub city: String,
 }
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
-pub struct FavTeamWithId {
-    pub _id: u32,
-    pub fav_team: FavTeam
-}
-
-
-
-
-
