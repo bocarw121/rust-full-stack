@@ -1,0 +1,54 @@
+:root {
+  --transition-short: all 0.3s ease-in-out 0s;
+  --color-background: #202027;
+  --color-hover: #4d5d6d;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 1.6rem;
+  background: var(--color-background);
+  color: #ffffff;
+}
+
+header {
+}
+
+nav {
+  height: 8rem;
+  border-bottom: 1px solid #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+}
+
+.logo {
+  position: absolute;
+  left: 0;
+  transition: var(--transition-short);
+}
+
+.logo:hover {
+  color: var(--color-hover);
+}
+
+a {
+  text-decoration: none;
+  color: white;
+  padding: 0 2rem;
+  font-size: 2.1rem;
+  transition: var(--transition-short);
+}
+
+a:hover {
+  color: var(--color-hover);
+}
