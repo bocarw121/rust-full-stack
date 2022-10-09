@@ -7,9 +7,9 @@ use super::route::Route;
 pub fn nav_bar() -> Html {
     html! {
           <>
-          <h1 class="logo"><Link<Route> to={Route::Home}>{"NBA TEAMS"}</Link<Route>></h1>
+        
            <nav>
-
+  <h1 class="logo">{"NBA TEAMS"}<Link<Route> to={Route::Home}></Link<Route>></h1>
               <div class="nav-links">
                 <Link<Route> to={Route::Teams}>{ "Teams" }</Link<Route>>
                 <Link<Route> to={Route::FavoriteTeams}>{ "Favorite Teams" }</Link<Route>>
