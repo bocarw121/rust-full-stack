@@ -5,6 +5,7 @@ pub struct Team {
     pub _id: u32,
     pub name: String,
     pub city: String,
+    pub logo: String
 }
 
 impl Team {
@@ -13,6 +14,7 @@ impl Team {
             _id: 0,
             name: "".to_owned(),
             city: "".to_owned(),
+            logo: "".to_owned()
         }
     }
 }
