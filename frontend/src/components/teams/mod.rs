@@ -1,20 +1,10 @@
-use reqwasm::http::Request;
-use types::Team;
 use yew::{function_component, html, use_effect_with_deps, use_state, Html};
+use yew_router::prelude::Link;
 
-async fn get_teams() -> Vec<Team> {
-    let res = match Request::get("/nba/teams").send().await {
-        Ok(res) => res,
-        Err(_) => panic!("Error fetching data"),
-    };
 
-    let teams: Vec<Team> = match res.json().await {
-        Ok(teams) => teams,
-        Err(_) => panic!("Error fetching data"),
-    };
+use crate::utils::Fetch;
+use super::route::Route;
 
-    teams
-}
 
 #[function_component(Teams)]
 pub fn teams() -> Html {
@@ -25,7 +15,7 @@ pub fn teams() -> Html {
             move |_| {
                 let teams = teams.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_teams = get_teams().await;
+                    let fetched_teams = Fetch::get_teams("/nba/teams".to_string()).await;
                     teams.set(fetched_teams)
                 });
                 || ()
@@ -34,16 +24,27 @@ pub fn teams() -> Html {
         );
     }
 
-  teams.iter().map(|team| {
+ let teams_html = teams.iter().map(|team| {
       html! {
-        <div class="team">
+        <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase(),  }} >
+        <div class="teams-item">
           <h3>{&team.city}</h3>
           <p>{&team.name}</p>
-        </div>
+          <img class="team-logo" src={team.logo.clone()} alt={format!("Team {}", &team.logo)} />
+          </div>
+        </Link<Route>>
       }
-    }).collect::<Html>()
-    
+    }).collect::<Html>();
 
+
+   
+   
+
+    html! {
+      <div class="teams-display">
+        { teams_html }
+      </div>
+    }
 
   
 }
