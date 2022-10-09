@@ -1,10 +1,9 @@
 use yew::{function_component, html, use_effect_with_deps, use_state, Html};
 use yew_router::prelude::Link;
 
+use super::{loader::Loader, route::Route};
 
 use crate::utils::Fetch;
-use super::route::Route;
-
 
 #[function_component(Teams)]
 pub fn teams() -> Html {
@@ -24,7 +23,7 @@ pub fn teams() -> Html {
         );
     }
 
- let teams_html = teams.iter().map(|team| {
+    let teams_html = teams.iter().map(|team| {
       html! {
         <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase(),  }} >
         <div class="teams-item">
@@ -36,15 +35,15 @@ pub fn teams() -> Html {
       }
     }).collect::<Html>();
 
-
-   
-   
+    if teams.len() == 0 {
+        return html! {
+             <Loader />
+        };
+    }
 
     html! {
       <div class="teams-display">
         { teams_html }
       </div>
     }
-
-  
 }
