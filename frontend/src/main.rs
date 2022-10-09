@@ -2,8 +2,6 @@ pub mod components;
 
 use components::App;
 
-
 fn main() {
-   yew::start_app::<App>();
+    yew::start_app::<App>();
 }
-
