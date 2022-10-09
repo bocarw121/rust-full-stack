@@ -28,12 +28,12 @@ nav {
   justify-content: center;
 }
 
-.logo {
+main {
+  margin: 0 8rem;
 }
-
 .logo {
   position: absolute;
-  left: 0;
+  left: 2rem;
   transition: var(--transition-short);
 }
 
@@ -44,11 +44,43 @@ nav {
 a {
   text-decoration: none;
   color: white;
+}
+
+.nav-links a {
   padding: 0 2rem;
   font-size: 2.1rem;
   transition: var(--transition-short);
 }
 
-a:hover {
+.nav-links a:hover {
   color: var(--color-hover);
+}
+
+/* Teams */
+
+.teams-display {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  justify-items: center;
+  gap: 3rem 4rem;
+  margin-top: 2rem;
+  margin: 5rem;
+}
+
+.teams-item {
+  border: 1px solid white;
+  padding: 4rem 5rem;
+  margin: 2rem 0;
+  text-align: center;
+  opacity: 0.8;
+  transition: all 0.2 ease-in-out 0s;
+}
+
+.teams-item:hover {
+  scale: 1.1;
+  opacity: 18;
+}
+
+.team-logo {
+  width: 200px;
 }
