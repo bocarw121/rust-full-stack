@@ -1,3 +1,9 @@
+pub mod components;
+
+use components::App;
+
+
 fn main() {
-    println!("Hello, world!");
+   yew::start_app::<App>();
 }
+
