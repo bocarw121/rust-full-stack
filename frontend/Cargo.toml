@@ -13,4 +13,6 @@ wasm-bindgen-futures = "0.4"
 futures = "0.3"
 gloo-console = "0.2.3"
 yew-router = "0.16"
+log = "0.4.6"
+wasm-logger = "0.2.0"
 types = { path = "../types" }
