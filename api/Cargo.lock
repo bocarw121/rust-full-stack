@@ -63,7 +63,6 @@ version = "0.1.0"
 dependencies = [
  "dotenv",
  "mongodb",
- "rand",
  "rocket",
  "serde",
  "types",
@@ -170,7 +169,7 @@ dependencies = [
  "serde_bytes",
  "serde_json",
  "time 0.3.15",
- "uuid 1.1.2",
+ "uuid 1.2.1",
 ]
 
 [[package]]
@@ -2081,9 +2080,9 @@ dependencies = [
 
 [[package]]
 name = "uuid"
-version = "1.1.2"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd6469f4314d5f1ffec476e05f17cc9a78bc7a27a6a857842170bdf8d6f98d2f"
+checksum = "feb41e78f93363bb2df8b0e86a2ca30eed7806ea16ea0c790d757cf93f79be83"
 dependencies = [
  "getrandom",
  "serde",

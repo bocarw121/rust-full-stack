@@ -7,8 +7,8 @@ use std::vec;
 
 use mongodb::bson::doc;
 use rocket::{
-    futures::{TryStreamExt},
-    http::{ Status},
+    futures::{TryStreamExt, TryFutureExt},
+    http::{ Status, ext::IntoCollection},
     serde::json::Json,
 };
 use serde::{Deserialize, Serialize};
@@ -58,52 +58,35 @@ pub async fn generate_nba_teams(id: String) {
         cursor.try_collect().await.unwrap_or_else(|_| vec![])
     }
 
-    pub async fn get_one_team(name: String) -> Team {
-        let cursor = match team_collection().await.find(None, None).await {
+    pub async fn get_one_team(name: String) -> Team  {
+           let cursor = match team_collection().await.find(None, None).await {
             Ok(cursor) => cursor,
             Err(_) => panic!("Error getting team"),
         };
 
-        let team_vec = cursor
+        let team_iter = cursor
             .try_collect()
             .await
             .unwrap_or_else(|_| vec![])
-            .into_iter()
-            .filter_map(|teams| {
-                teams.teams.into_iter().find(|team| team.name == name)
-            });
+            .into_iter();
 
-        team_vec.collect::<Vec<Team>>()[0].clone()
+        let team_vec = team_iter.into_iter().flat_map(|teams| teams.teams.into_iter()).collect::<Vec<Team>>();
+        
+        let team = match team_vec.into_iter().find(|team| team.name.to_lowercase() == name.to_lowercase())  {
+            Some(team) => team,
+            None => panic!("No team found")
+        }; 
+   
+     team
 
-     
+
     }
 // TODO
     pub async fn add_favorite_team(payload: Json<FavTeamPayload>) -> Message {
         let collection = fav_team_collection().await;
 
-        // make request do db for teams here
-        let teams = get_teams("".to_owned());
-
-        // iterate through array of teams to get the team data
-        let teams = teams.iter().find_map(|team| {
-            if team.name.to_lowercase() == payload.team_name.to_lowercase() {
-                Some(team)
-            } else {
-                None
-            }
-        });
-
-        let team = match teams {
-            Some(team) => team,
-            None => {
-                return Message {
-                    status: Status::NotFound.to_string(),
-                    message: "Please enter a valid team name".to_owned(),
-                }
-            }
-        };
-
-        let team = team.clone();
+        // Use the get one team model to get the team
+        let team = Self::get_one_team(payload.team_name.clone()).await;
 
         let updated_team = Team {
             _id: team._id,
@@ -152,3 +135,89 @@ pub async fn generate_nba_teams(id: String) {
         fav_team
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  pub async fn add_favorite_team(payload: Json<FavTeamPayload>) -> Message {
+//         let collection = fav_team_collection().await;
+
+//         // make request do db for teams here
+//         let teams = get_teams("".to_owned());
+
+//         // iterate through array of teams to get the team data
+//         let teams = teams.iter().find_map(|team| {
+//             if team.name.to_lowercase() == payload.team_name.to_lowercase() {
+//                 Some(team)
+//             } else {
+//                 None
+//             }
+//         });
+
+//         let team = match teams {
+//             Some(team) => team,
+//             None => {
+//                 return Message {
+//                     status: Status::NotFound.to_string(),
+//                     message: "Please enter a valid team name".to_owned(),
+//                 }
+//             }
+//         };
+
+//         let team = team.clone();
+
+//         let updated_team = Team {
+//             _id: team._id,
+//             name: team.name,
+//             city: team.city,
+//             logo: team.logo,
+//             is_favorite: true,
+//         };
+
+//         let fav_team = FavTeam {
+//             _id: payload.user_id.to_owned(),
+//             team: updated_team,
+//         };
+
+//         let status = match collection.insert_one(fav_team.clone(), None).await {
+//             Ok(_) => Message {
+//                 status: Status::Created.to_string(),
+//                 message: "Favorite team created Successfully".to_owned(),
+//             },
+//             Err(_) => Message {
+//                 status: Status::Conflict.to_string(),
+//                 message: "Something went wrong, please try again".to_owned(),
+//             },
+//         };
+
+//         status
+//     }

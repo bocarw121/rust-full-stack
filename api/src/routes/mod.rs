@@ -15,10 +15,13 @@ pub(crate) async fn initialize_nba_teams(user_id: String) {
 
 
 #[get("/teams?<user_id>", rank = 1)]
-pub(crate) async fn all_nba_teams(user_id: String) -> Json<Vec<NBATeams>> {
+pub(crate) async fn all_nba_teams(user_id: String) -> Json<NBATeams> {
     let teams = Model::get_all_teams(user_id).await;
 
-    Json(teams)
+    Json(NBATeams {
+        _id: teams[0]._id.clone(),
+        teams: teams[0].teams.clone(),
+    })
 }
 
 #[get("/teams/<name>")]
