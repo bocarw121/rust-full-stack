@@ -33,6 +33,14 @@ pub struct NewTeam {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct FavTeam {
     pub user_name: String,
-    pub team_name: String,
-    pub city: String,
+    pub team: Team,
 }
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
+pub struct FavTeamPayload {
+    pub user_name: String,
+    pub team_name: String
+}
+
+
+
