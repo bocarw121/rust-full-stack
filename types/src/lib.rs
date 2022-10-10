@@ -5,7 +5,8 @@ pub struct Team {
     pub _id: u32,
     pub name: String,
     pub city: String,
-    pub logo: String
+    pub logo: String,
+    pub is_favorite: bool
 }
 
 impl Team {
@@ -14,7 +15,8 @@ impl Team {
             _id: 0,
             name: "".to_owned(),
             city: "".to_owned(),
-            logo: "".to_owned()
+            logo: "".to_owned(),
+            is_favorite: false
         }
     }
 }
@@ -32,7 +34,7 @@ pub struct NewTeam {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct FavTeam {
-    pub user_name: String,
+    pub _id: String,
     pub team: Team,
 }
 

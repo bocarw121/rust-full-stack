@@ -25,6 +25,7 @@ pub(crate) async fn get_team_by_name(name: String) -> Result<Json<Team>, String>
 // Favorite teams
 #[post("/favorite", format = "application/json", data = "<favteam>")]
 pub async fn post_favorite_team(favteam: Json<FavTeamPayload>) -> Json<Message> {
+    println!("{:?}", favteam);
     let favorite_team = Model::add_favorite_team(favteam).await;
 
     Json(favorite_team)

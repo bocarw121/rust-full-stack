@@ -6,7 +6,11 @@ pub mod utils;
 
 use std::vec;
 
-use rocket::{futures::{TryStreamExt, StreamExt}, http::{Status, ext::IntoCollection}, serde::json::Json};
+use rocket::{
+    futures::{StreamExt, TryStreamExt},
+    http::{ext::IntoCollection, Status},
+    serde::json::Json,
+};
 use serde::{Deserialize, Serialize};
 use types::{FavTeam, FavTeamPayload, Team};
 
@@ -57,7 +61,7 @@ impl Model {
     pub async fn add_favorite_team(payload: Json<FavTeamPayload>) -> Message {
         let collection = fav_team_collection().await;
         let teams = get_teams();
-        
+
         // iterate through array of teams to get the team data
         let teams = teams.iter().find_map(|team| {
             if team.name.to_lowercase() == payload.team_name.to_lowercase() {
@@ -69,16 +73,27 @@ impl Model {
 
         let team = match teams {
             Some(team) => team,
-            None => return Message {
-                status: Status::NotFound.to_string(),
-                message: "Please enter a valid team name".to_owned(),
-            },
+            None => {
+                return Message {
+                    status: Status::NotFound.to_string(),
+                    message: "Please enter a valid team name".to_owned(),
+                }
+            }
         };
 
-       
+        let team = team.clone();
+
+        let updated_team = Team {
+            _id: team._id,
+            name: team.name,
+            city: team.city,
+            logo: team.logo,
+            is_favorite: true,
+        };
+
         let fav_team = FavTeam {
-            user_name: payload.user_name.to_owned(),
-            team: team.clone(),
+            _id: payload.user_name.to_owned(),
+            team: updated_team,
         };
 
         let status = match collection.insert_one(fav_team.clone(), None).await {
@@ -102,10 +117,16 @@ impl Model {
             Ok(cursor) => cursor,
             Err(_) => panic!("Error getting teams"),
         };
-  
-        // Filter out the favorite team for a specific user.
-       let fav_team = cursor.try_collect().await.unwrap_or_else(|_| vec![]).into_iter().filter(|favteam| favteam.user_name.to_lowercase() == user_name.to_owned()).collect();
 
-       fav_team
+        // Filter out the favorite team for a specific user.
+        let fav_team = cursor
+            .try_collect()
+            .await
+            .unwrap_or_else(|_| vec![])
+            .into_iter()
+            .filter(|favteam| favteam._id.to_lowercase() == user_name.to_owned())
+            .collect();
+
+        fav_team
     }
 }
