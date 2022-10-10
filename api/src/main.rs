@@ -13,6 +13,7 @@ fn rocket() -> _ {
     rocket::build().mount("/", routes![index]).mount(
         "/nba",
         routes![
+            initialize_nba_teams,
             all_nba_teams,
             get_team_by_name,
             post_favorite_team,

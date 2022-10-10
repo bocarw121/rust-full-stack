@@ -1,18 +1,18 @@
 pub mod client;
 pub mod collections;
 pub mod db;
-pub mod seed;
 pub mod utils;
 
 use std::vec;
 
+use mongodb::bson::doc;
 use rocket::{
-    futures::{StreamExt, TryStreamExt},
-    http::{ext::IntoCollection, Status},
+    futures::{TryStreamExt},
+    http::{ Status},
     serde::json::Json,
 };
 use serde::{Deserialize, Serialize};
-use types::{FavTeam, FavTeamPayload, Team};
+use types::{FavTeam, FavTeamPayload, Team, NBATeams};
 
 use crate::nba::get_teams;
 
@@ -27,10 +27,30 @@ pub struct Model();
 
 // Holds all functions for the database calls
 impl Model {
-    pub async fn get_all_teams() -> Vec<Team> {
+
+pub async fn generate_nba_teams(id: String) {
+    let collection = team_collection().await;
+
+    let teams = NBATeams {
+        _id: id.clone(),
+        teams: get_teams(id),
+    };
+
+
+
+    let result = collection.insert_one(teams, None).await;
+
+    match result {
+        Ok(result) => println!("Inserted {} documents", result.inserted_id),
+        Err(e) => println!("Error inserting documents: {}", e),
+    }
+}
+
+
+    pub async fn get_all_teams(id: String) -> Vec<NBATeams> {
         let collection = team_collection().await;
 
-        let cursor = match collection.find(None, None).await {
+        let cursor = match collection.find(doc! {"_id": id} , None).await {
             Ok(cursor) => cursor,
             Err(_) => panic!("Error getting teams"),
         };
@@ -44,23 +64,25 @@ impl Model {
             Err(_) => panic!("Error getting team"),
         };
 
-        let team = match cursor
+        let team_vec = cursor
             .try_collect()
             .await
             .unwrap_or_else(|_| vec![])
             .into_iter()
-            .find(|team| team.name.to_lowercase() == name)
-        {
-            Some(team) => team,
-            None => Team::default(),
-        };
+            .filter_map(|teams| {
+                teams.teams.into_iter().find(|team| team.name == name)
+            });
 
-        team
+        team_vec.collect::<Vec<Team>>()[0].clone()
+
+     
     }
-
+// TODO
     pub async fn add_favorite_team(payload: Json<FavTeamPayload>) -> Message {
         let collection = fav_team_collection().await;
-        let teams = get_teams();
+
+        // make request do db for teams here
+        let teams = get_teams("".to_owned());
 
         // iterate through array of teams to get the team data
         let teams = teams.iter().find_map(|team| {
@@ -92,7 +114,7 @@ impl Model {
         };
 
         let fav_team = FavTeam {
-            _id: payload.user_name.to_owned(),
+            _id: payload.user_id.to_owned(),
             team: updated_team,
         };
 

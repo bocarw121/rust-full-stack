@@ -1,5 +1,5 @@
 use rocket::serde::json::Json;
-use types::{FavTeam, FavTeamPayload, Team};
+use types::{FavTeam, FavTeamPayload, Team, NBATeams};
 
 use crate::mongo::{Message, Model};
 
@@ -8,9 +8,15 @@ pub(crate) fn index() -> &'static str {
     "Welcome to the NBA teams api"
 }
 
-#[get("/teams")]
-pub(crate) async fn all_nba_teams() -> Json<Vec<Team>> {
-    let teams = Model::get_all_teams().await;
+#[get("/teams/insert?<user_id>")]
+pub(crate) async fn initialize_nba_teams(user_id: String) {
+    Model::generate_nba_teams(user_id).await;
+}
+
+
+#[get("/teams?<user_id>", rank = 1)]
+pub(crate) async fn all_nba_teams(user_id: String) -> Json<Vec<NBATeams>> {
+    let teams = Model::get_all_teams(user_id).await;
 
     Json(teams)
 }
@@ -37,3 +43,4 @@ pub async fn get_favorite_teams(user_name: String) -> Json<Vec<FavTeam>> {
 
     Json(favorite_teams)
 }
+
