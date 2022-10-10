@@ -1,5 +1,5 @@
 use rocket::serde::json::Json;
-use types::{FavTeam,  Team, };
+use types::{FavTeam, FavTeamPayload, Team};
 
 use crate::mongo::{Message, Model};
 
@@ -24,16 +24,15 @@ pub(crate) async fn get_team_by_name(name: String) -> Result<Json<Team>, String>
 
 // Favorite teams
 #[post("/favorite", format = "application/json", data = "<favteam>")]
-pub async fn post_favorite_team(favteam: Json<FavTeam>) -> Json<Message> {
+pub async fn post_favorite_team(favteam: Json<FavTeamPayload>) -> Json<Message> {
     let favorite_team = Model::add_favorite_team(favteam).await;
-    
+
     Json(favorite_team)
 }
 
-#[get("/favorite")]
-pub async fn get_favorite_teams() -> Json<Vec<FavTeam>> {
-    let favorite_teams = Model::get_all_favorite_teams().await;
-    
-    Json(favorite_teams)
+#[get("/favorite/<user_name>")]
+pub async fn get_favorite_teams(user_name: String) -> Json<Vec<FavTeam>> {
+    let favorite_teams = Model::get_all_favorite_teams(user_name).await;
 
+    Json(favorite_teams)
 }

@@ -1,5 +1,5 @@
 use mongodb::Collection;
-use types::{ Team, FavTeam};
+use types::{FavTeam, Team};
 
 use super::db;
 
@@ -13,8 +13,6 @@ pub async fn team_collection() -> Collection<Team> {
 
     collection
 }
-
-
 
 pub async fn fav_team_collection() -> Collection<FavTeam> {
     let db = db::create().await;
