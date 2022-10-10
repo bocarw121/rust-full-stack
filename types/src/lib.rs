@@ -23,6 +23,7 @@ impl Team {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct NBATeams {
+    pub _id: String,
     pub teams: Vec<Team>,
 }
 
@@ -40,7 +41,7 @@ pub struct FavTeam {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct FavTeamPayload {
-    pub user_name: String,
+    pub user_id: String,
     pub team_name: String
 }
 
