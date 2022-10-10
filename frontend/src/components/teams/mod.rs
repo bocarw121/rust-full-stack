@@ -25,12 +25,13 @@ pub fn teams() -> Html {
 
     let teams_html = teams.iter().map(|team| {
       html! {
-        <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase(),  }} >
+        <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase() }} >
         <div class="teams-item">
           <h3>{&team.city}</h3>
           <p>{&team.name}</p>
           <img class="team-logo" src={team.logo.clone()} alt={format!("Team {}", &team.logo)} />
           </div>
+
         </Link<Route>>
       }
     }).collect::<Html>();

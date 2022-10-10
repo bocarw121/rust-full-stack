@@ -1,5 +1,5 @@
 use reqwasm::http::Request;
-use types::Team;
+use types::{Team, FavTeamPayload};
 pub struct Fetch;
 
 impl Fetch {
@@ -29,5 +29,17 @@ impl Fetch {
         };
 
         team
+    }
+
+    pub async fn post_team(url: String, body: FavTeamPayload){
+        let body = serde_json::to_string(&body).unwrap();
+       
+       let result = match  Request::post(&url).body(&body).header("Content-Type", "application/json").send().await {
+            Ok(res) => res,
+            Err(_) =>  panic!("Error posting fetching data")
+        };
+
+
+          log::info!("Post body {:?}", &body.to_string());
     }
 }
