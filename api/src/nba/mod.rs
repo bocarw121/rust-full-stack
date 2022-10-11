@@ -1,6 +1,5 @@
 use types::{NBATeams, Team};
 
-
 // Returns a vec with all the nba
 pub(crate) fn get_teams(_id: String) -> Vec<Team> {
     let nba = NBATeams {
