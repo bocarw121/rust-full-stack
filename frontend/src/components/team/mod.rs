@@ -1,8 +1,8 @@
 use serde::__private::de;
-use yew::{function_component, html, use_effect_with_deps, use_state, Properties, Callback};
+use yew::{function_component, html, use_effect_with_deps, use_state, Callback, Properties};
 
 use super::loader::Loader;
-use crate::utils::Fetch;
+use crate::utils::{Fetch, User};
 use gloo_storage::{LocalStorage, Storage};
 #[derive(Properties, PartialEq)]
 pub struct Props {
@@ -15,11 +15,10 @@ pub fn team(props: &Props) -> Html {
 
     let props = props.clone();
     let team = team.clone();
-    
 
     {
         let team = team.clone();
-        let path = format!("/nba/teams/{}", props.name.clone());
+        let path = format!("/nba/teams/{}?user_id={}", props.name.clone(), User::get_user_id());
         use_effect_with_deps(
             move |_| {
                 let team = team.clone();
@@ -42,46 +41,53 @@ pub fn team(props: &Props) -> Html {
         };
     }
 
-    
-    
-    let storage_key = format!("is_favorite-{}",&team.name);
-      // Added logic to store favorite items to local storage
-       let is_favorite: String = match  LocalStorage::get(format!("is_favorite-{}",&team.name)) {
+    // Added logic to store favorite items to local storage
+    let user_id: String = match LocalStorage::get("user_id") {
         Ok(value) => value,
         Err(_) => "".to_owned(),
-   };
-   
+    };
+
     let onclick = {
         let team = team.clone();
-        
+
         Callback::from(move |_| {
-                 LocalStorage::set(storage_key.clone(), &team.name).unwrap();
-               let team = team.clone();
-            wasm_bindgen_futures::spawn_local(async move  {
-                Fetch::post_team("/nba/favorite".to_string(), types::FavTeamPayload { user_name: "user1".to_string(), team_name: team.name.clone() }).await
-        });
+            let user_id = user_id.clone();
+            let team = team.clone();
+            wasm_bindgen_futures::spawn_local(async move {
+                Fetch::post_team(
+                    "/nba/favorite".to_string(),
+                    types::FavTeamPayload {
+                        user_id,
+                        team_name: team.name.clone(),
+                    },
+                )
+                .await
+            });
         })
     };
 
-    let storage_key = format!("is_favorite-{}",&team.name);
-   let delete = {
-        Callback::from(move |_|  LocalStorage::delete(&storage_key.clone()))
+ 
+  
+
+    let favorite_text = if team.is_favorite {
+        "Add to favorites"
+    } else {
+        "Added to favorite"
     };
 
+ 
 
-    let favorite_text = if !is_favorite.contains(&team.name) {"Add to favorites"} else {"Added to favorite"};
 
-    log::info!("isfavorite: {:?} {:?} ", is_favorite.contains(&team.name), is_favorite, );
+
+
+
+    log::info!("isfavorite: {:?} ", team.is_favorite);
     html! {
       <div class="team">
          <h1>{&team.city}</h1>
          <h2>{&team.name}</h2>
          <img class="team-logo-large" src={team.logo.clone()} alt={format!("Team {}", &team.logo)} />
-            <button {onclick} >{favorite_text}</button>
-            <button onclick={delete}  >{"Remove from favorites"}</button>
+            <button {onclick} disabled={team.is_favorite} >{favorite_text}</button>
       </div>
     }
 }
-
-
-

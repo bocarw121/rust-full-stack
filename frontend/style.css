@@ -148,3 +148,8 @@ button:focus {
     rotate: 360deg;
   }
 }
+
+/* utils */
+.center {
+  text-align: center;
+}

@@ -3,7 +3,7 @@ use yew_router::prelude::Link;
 
 use super::{loader::Loader, route::Route};
 
-use crate::utils::Fetch;
+use crate::utils::{Fetch, User};
 
 #[function_component(Teams)]
 pub fn teams() -> Html {
@@ -12,10 +12,12 @@ pub fn teams() -> Html {
         let teams = teams.clone();
         use_effect_with_deps(
             move |_| {
+    
                 let teams = teams.clone();
                 wasm_bindgen_futures::spawn_local(async move {
-                    let fetched_teams = Fetch::get_teams("/nba/teams".to_string()).await;
-                    teams.set(fetched_teams)
+                    let fetched_teams = Fetch::get_teams().await;
+                    log::info!("teams {:?}", fetched_teams);
+                    teams.set(fetched_teams.teams)
                 });
                 || ()
             },
@@ -24,6 +26,7 @@ pub fn teams() -> Html {
     }
 
     let teams_html = teams.iter().map(|team| {
+      
       html! {
         <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase() }} >
         <div class="teams-item">
