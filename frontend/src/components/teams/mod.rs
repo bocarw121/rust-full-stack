@@ -12,7 +12,6 @@ pub fn teams() -> Html {
         let teams = teams.clone();
         use_effect_with_deps(
             move |_| {
-    
                 let teams = teams.clone();
                 wasm_bindgen_futures::spawn_local(async move {
                     let fetched_teams = Fetch::get_teams().await;
