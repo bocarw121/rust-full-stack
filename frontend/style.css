@@ -1,5 +1,5 @@
 :root {
-  --transition-short: all 0.3s ease-in-out 0s;
+  --transition-short: all 0.2s ease-in-out 0s;
   --color-background: #202027;
   --color-hover: #4d5d6d;
 }
@@ -34,7 +34,8 @@ main {
   transition: var(--transition-short);
 }
 
-.logo:hover {
+.logo a:hover {
+  transition: var(--transition-short);
   color: var(--color-hover);
 }
 
@@ -56,7 +57,10 @@ a {
 /* Home */
 .home {
   text-align: center;
+  font-size: 3rem;
+  margin-top: 20rem;
 }
+
 /* Teams */
 
 .teams-display {

@@ -3,7 +3,7 @@ use yew_router::prelude::Link;
 
 use super::{loader::Loader, route::Route};
 
-use crate::utils::{Fetch, User};
+use crate::utils::{Fetch, };
 
 #[function_component(Teams)]
 pub fn teams() -> Html {

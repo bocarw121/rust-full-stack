@@ -1,7 +1,7 @@
 use rocket::{serde::json::Json, http::Status};
 use types::{FavTeam, FavTeamPayload, NBATeams, Team};
 
-use crate::mongo::{Message, Model, collections::fav_team_collection};
+use crate::mongo::{Message, Model};
 
 #[get("/")]
 pub(crate) fn index() -> &'static str {

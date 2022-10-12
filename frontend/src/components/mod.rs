@@ -10,6 +10,7 @@ pub mod teams;
 pub mod favorite_teams;
 pub mod loader;
 pub mod route;
+pub mod button;
 
 use favorite_teams::FavoriteTeams;
 use home::Home;

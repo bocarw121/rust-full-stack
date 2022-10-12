@@ -8,7 +8,9 @@ pub fn nav_bar() -> Html {
     html! {
     <>
     <nav>
-        <h1 class="logo"><Link<Route> to={Route::Home}>{"NBA TEAMS"}</Link<Route>></h1>
+      <div class="logo">
+        <h1 ><Link<Route> to={Route::Home}>{"NBA TEAMS"}</Link<Route>></h1>
+        </div>
         <div class="nav-links">
           <Link<Route> to={Route::Teams}>{ "Teams" }</Link<Route>>
           <Link<Route> to={Route::FavoriteTeams}>{ "Favorite Teams" }</Link<Route>>

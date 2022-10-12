@@ -95,6 +95,18 @@ impl Fetch {
 
         log::info!("Post body {:?}", &body.to_string());
     }
+
+
+    pub async fn delete_favorite_team(team_name: String)  {
+        let user_id = User::get_user_id();
+        let url = format!("/nba/favorite?team_name={}&user_id={}", team_name, user_id);
+            match Request::delete(&url).send().await {
+            Ok(response) => response,
+            Err(_) => panic!("Error adding favorites"),
+        };
+    }
+
+    
 }
 
 pub struct User;

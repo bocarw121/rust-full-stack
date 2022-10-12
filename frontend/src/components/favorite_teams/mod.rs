@@ -1,4 +1,4 @@
-use super::{loader::Loader, route::Route};
+use super::{route::Route};
 use crate::utils::Fetch;
 use yew::{function_component, html, use_effect_with_deps, use_state, Html};
 use yew_router::prelude::Link;
@@ -21,7 +21,8 @@ pub fn favorite_teams() -> Html {
             (),
         );
     }
-    log::info!("Fav team {:?}", fav_teams);
+
+
     // Turn this into a reusable component
     let fav_html = fav_teams
         .iter()
@@ -42,11 +43,7 @@ pub fn favorite_teams() -> Html {
         }).collect::<Html>()  
         ;
 
-    if fav_teams.len() == 0 {
-        return html! {
-             <h1 class="center">{" No favorite teams "}</h1>
-        };
-    }
+
 
     html! {
       <>
@@ -61,23 +58,3 @@ pub fn favorite_teams() -> Html {
 }
 
 
-
-//  // Turn this into a reusable component
-//     let fav_html = fav_teams
-//         .iter()
-//         .map(|fav_teams| {
-//              fav_teams.team.iter().map(|team| {
-//                    html! {
-//               <Link<Route> to={Route::Team { name: team.name.clone().to_lowercase() }} >
-
-//             <div class="teams-item">
-//               <h3>{&team.city}</h3>
-//               <p>{&team.name}</p>
-//               <img class="team-logo" src={team.logo.clone()} alt={format!("Team {}", &team.logo)} />
-//               </div>
-
-//             </Link<Route>>
-//             }
-//              }).collect::<Html>()   
-//         }).collect::<Html>()  
-//         ;
