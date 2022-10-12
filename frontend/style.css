@@ -1,0 +1,159 @@
+:root {
+  --transition-short: all 0.2s ease-in-out 0s;
+  --color-background: #202027;
+  --color-hover: #4d5d6d;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 1.6rem;
+  background: var(--color-background);
+  color: #ffffff;
+}
+
+nav {
+  height: 8rem;
+  border-bottom: 1px solid #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  margin: 0 8rem;
+}
+.logo {
+  position: absolute;
+  left: 2rem;
+  transition: var(--transition-short);
+}
+
+.logo a:hover {
+  transition: var(--transition-short);
+  color: var(--color-hover);
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.nav-links a {
+  padding: 0 2rem;
+  font-size: 2.1rem;
+  transition: var(--transition-short);
+}
+
+.nav-links a:hover {
+  color: var(--color-hover);
+}
+
+/* Home */
+.home {
+  text-align: center;
+  font-size: 3rem;
+  margin-top: 20rem;
+}
+
+/* Teams */
+
+.teams-display {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  justify-items: center;
+  gap: 3rem 4rem;
+  margin-top: 2rem;
+  margin: 5rem;
+}
+
+.teams-item {
+  border: 1px solid white;
+  padding: 4rem 5rem;
+  margin: 2rem 0;
+  text-align: center;
+  opacity: 0.8;
+  transition: all 0.2 ease-in-out 0s;
+}
+
+.teams-item:hover {
+  scale: 1.1;
+  opacity: 18;
+}
+
+.team-logo {
+  width: 200px;
+}
+
+/* Team */
+
+.team {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  margin: 2rem 0 4rem 0;
+}
+
+.team h1 {
+  font-size: 4rem;
+}
+
+.team h2 {
+  font-size: 3rem;
+}
+
+.team-logo-large {
+  margin-bottom: 4rem;
+  width: 30rem;
+}
+
+button {
+  padding: 1rem;
+  border-radius: 1.2rem;
+  cursor: pointer;
+  outline: none;
+  border: 3 solid;
+  background-color: rgb(124, 124, 236);
+  font-size: 2rem;
+}
+
+button:focus {
+  border: 3px solid blue;
+}
+
+/* Loader */
+.loader-wrapper {
+  display: grid;
+  place-content: center;
+  margin-top: 8rem;
+}
+
+.loader {
+  width: 8rem;
+  height: 8rem;
+  border: 5px solid #ccc;
+  border-radius: 50%;
+  border-top-color: rgb(124, 124, 236);
+  animation: spin 0.8s linear infinite;
+  display: ;
+}
+
+@keyframes spin {
+  from {
+    rotate: 0;
+  }
+
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* utils */
+.center {
+  text-align: center;
+}

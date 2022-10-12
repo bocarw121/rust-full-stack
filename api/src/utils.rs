@@ -21,6 +21,6 @@ pub fn get_app_vars(key_wanted: String) -> String {
     }
     match var_hash.get(&key_wanted.to_owned()) {
         Some(var) => var.to_owned(),
-        None => panic!("No Env variable with key = {}", &key_wanted.to_owned()),
+        None => format!("No Env variable with key = {}", &key_wanted.to_owned()),
     }
 }
