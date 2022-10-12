@@ -1,7 +1,7 @@
-use rocket::serde::json::Json;
+use rocket::{serde::json::Json, http::Status};
 use types::{FavTeam, FavTeamPayload, NBATeams, Team};
 
-use crate::mongo::{Message, Model};
+use crate::mongo::{Message, Model, collections::fav_team_collection};
 
 #[get("/")]
 pub(crate) fn index() -> &'static str {
@@ -28,9 +28,9 @@ pub(crate) async fn all_nba_teams(user_id: String) -> Json<NBATeams> {
     })
 }
 
-#[get("/teams/<name>?<user_id>")]
-pub(crate) async fn get_team_by_name(name: String, user_id: String) -> Result<Json<Team>, String> {
-    let team = match Model::get_one_team(name, user_id).await {
+#[get("/teams/<team_name>?<user_id>")]
+pub(crate) async fn get_team_by_name(team_name:String, user_id: String) -> Result<Json<Team>, String> {
+    let team = match Model::get_one_team(team_name, user_id).await {
         Ok(team) => team,
         Err(_) => return Err("Team not found".to_owned())
     };
@@ -39,10 +39,10 @@ pub(crate) async fn get_team_by_name(name: String, user_id: String) -> Result<Js
 }
 
 // Post  Favorite teams
-#[post("/favorite", format = "application/json", data = "<favteam>")]
-pub async fn post_favorite_team(favteam: Json<FavTeamPayload>) -> Json<Message> {
-    println!("{:?}", favteam);
-    let favorite_team = Model::add_favorite_team(favteam).await;
+#[post("/favorite", format = "application/json", data = "<fav_team>")]
+pub async fn post_favorite_team(fav_team: Json<FavTeamPayload>) -> Json<Message> {
+    println!("{:?}", fav_team);
+    let favorite_team = Model::add_favorite_team(fav_team).await;
 
     Json(favorite_team)
 }
@@ -52,6 +52,15 @@ pub async fn post_favorite_team(favteam: Json<FavTeamPayload>) -> Json<Message> 
 pub async fn get_favorite_teams(user_id: String) -> Json<Vec<FavTeam>> {
     let favorite_teams = Model::get_all_favorite_teams(user_id).await;
 
+    println!("{:?}", favorite_teams);
+
     Json(favorite_teams)
 }
+
+
+#[delete("/favorite?<team_name>&<user_id>")]
+pub async fn delete_favorite_team(team_name:String, user_id: String) -> Status{
+  Model::delete_favorite_team(team_name, user_id).await
+}
+
 

@@ -14,10 +14,10 @@ pub async fn team_collection() -> Collection<NBATeams> {
     collection
 }
 
-pub async fn fav_team_collection() -> Collection<Vec<FavTeam>> {
+pub async fn fav_team_collection() -> Collection<FavTeam> {
     let db = db::create().await;
 
-    let collection = db.collection::<Vec<FavTeam>>(FAV_TEAM_COLLECTION);
+    let collection = db.collection::<FavTeam>(FAV_TEAM_COLLECTION);
 
     collection
 }

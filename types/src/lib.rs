@@ -36,7 +36,7 @@ pub struct NewTeam {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]
 pub struct FavTeam {
     pub _id: String,
-    pub team: Team,
+    pub team: Vec<Team>,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone)]

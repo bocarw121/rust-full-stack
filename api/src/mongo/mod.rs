@@ -5,11 +5,11 @@ pub mod utils;
 
 use std::vec;
 
-use mongodb::bson::doc;
+use mongodb::{bson::{doc, self}, options::{UpdateOptions, DeleteOptions}};
 use rocket::{
     futures::{TryStreamExt, TryFutureExt},
     http::{ Status, ext::IntoCollection},
-    serde::json::Json,
+    serde::json::Json, sentinel::resolution::DefaultSentinel,
 };
 use serde::{Deserialize, Serialize};
 use types::{FavTeam, FavTeamPayload, Team, NBATeams};
@@ -59,6 +59,7 @@ pub async fn generate_nba_teams(id: String) {
     }
 
     pub async fn get_one_team(name: String, user_id: String) -> Result<Team, Message> {
+        
         let doc = doc! {"_id": user_id};
            let cursor = match team_collection().await.find(doc, None).await {
             Ok(cursor) => cursor,
@@ -67,7 +68,6 @@ pub async fn generate_nba_teams(id: String) {
                 message: "Team not found".to_owned()
             })
         };
-
         let team_iter = cursor
             .try_collect()
             .await
@@ -103,33 +103,39 @@ pub async fn generate_nba_teams(id: String) {
             }
         }; 
 
-        let updated_team = Team {
-            _id: team._id,
-            name: team.name,
-            city: team.city,
-            logo: team.logo,
-            // This will toggle is_favorite state
-            is_favorite: true,
-        };
-
-        let fav_team = vec![ 
-            FavTeam {
-            _id: payload.user_id.to_owned(),
-            team: updated_team,
-        }
+           // Make a bson for type team to pass to docs
+        let team_bson = match bson::to_bson(&team) {
+            Ok(team_bson) => team_bson,
+            Err(_) =>return Message {
+                status: Status::InternalServerError.to_string(),
+                message: "Something went wrong please try again".to_owned()
+            },
+        }; 
         
-        ];
+        let docs = doc! {"_id": payload.user_id.clone(), };
+        // No duplicates $addToSet upserts if the document doesn't exist
+       
+        let update = doc! {"$addToSet": {"team": team_bson}};
+   
+        //  build options and set upsert to true
+        let options = UpdateOptions::builder().upsert(true).build();
 
-        let status = match collection.insert_one(fav_team.clone(), None).await {
+        let status = match collection.update_one(docs, update, options.clone()).await {
             Ok(_) => Message {
                 status: Status::Created.to_string(),
-                message: "Favorite team created Successfully".to_owned(),
+                message:format!("{} successfully added to favorites list",team.name),
             },
-            Err(_) => Message {
+            Err(e) => Message {
                 status: Status::Conflict.to_string(),
-                message: "Something went wrong, please try again".to_owned(),
+                message: format!("Something went wrong, please try again {}", e),
             },
         };
+
+        println!("{:?}", status);
+        
+   
+
+     
 
         status
     }
@@ -142,15 +148,53 @@ pub async fn generate_nba_teams(id: String) {
             Err(_) => panic!("Error getting favorite teams"),
         };
 
-        fav_teams.try_collect().await.unwrap_or_else(|_| vec![]).into_iter().flat_map(|fav_teams|fav_teams.into_iter()).collect::<Vec<FavTeam>>()
-
+        fav_teams.try_collect().await.unwrap_or_else(|_| vec![])
 
       
     }
 
 
-     pub async fn update_one_team(name: String, user_id: String) -> Message {
-        let team = Self::get_one_team(name.clone(), user_id.clone()).await;
+    pub async fn delete_favorite_team(team_name: String, user_id: String) ->Status {
+        let collection = fav_team_collection().await;
+
+          let doc = doc! {"_id": user_id.clone()};
+           let cursor = match collection.find(doc, None).await{
+            Ok(cursor) => cursor,
+            Err(_) => return Status::InternalServerError
+        };
+        let fav_team_iter = cursor
+            .try_collect()
+            .await
+            .unwrap_or_else(|_| vec![])
+            .into_iter();
+
+        let fav_team_vec = fav_team_iter.into_iter().flat_map(|teams| teams.team.into_iter()).collect::<Vec<Team>>();
+        
+        let team = match fav_team_vec.into_iter().find(|team| team.name.to_lowercase() == team_name.to_lowercase())  {
+            Some(team) => team,
+            None => return Status::NotFound
+        }; 
+
+
+
+        // let team_update_key = format!("_id", team._id);
+      
+        let query = doc!  {"_id": user_id };
+        let update = doc! {"$pull": {"team": {"_id":team._id } }};
+        
+       let result = match collection.update_many(query, update, None).await {
+           Ok(result) => result,
+           Err(_) => return  Status::NotFound
+       }; 
+
+               println!("{:?}", result);
+
+         Status::Ok
+    }
+
+
+     pub async fn update_one_team(user_name: String, user_id: String) -> Message {
+        let team = Self::get_one_team(user_name.clone(), user_id.clone()).await;
 
 
         let team = match team {

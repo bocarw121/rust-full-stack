@@ -18,7 +18,8 @@ fn rocket() -> _ {
             get_team_by_name,
             post_favorite_team,
             get_favorite_teams,
-            update_one_team
+            update_one_team,
+            delete_favorite_team
         ],
     )
 }
