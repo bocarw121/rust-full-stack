@@ -5,6 +5,7 @@ pub mod mongo;
 pub mod nba;
 pub mod routes;
 pub mod utils;
+pub mod responses;
 use routes::*;
 
 #[launch]

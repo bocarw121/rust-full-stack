@@ -1,7 +1,7 @@
 use rocket::{serde::json::Json, http::Status};
 use types::{FavTeam, FavTeamPayload, NBATeams, Team};
 
-use crate::mongo::{Message, Model};
+use crate::{mongo::{Message, Model}, responses::{success::SuccessResponses, error::{Error, ErrorResponse}}};
 
 #[get("/")]
 pub(crate) fn index() -> &'static str {
@@ -19,13 +19,17 @@ pub(crate) async fn update_one_team(user_id: String,team_name:String) -> Json<Me
 }
 
 #[get("/teams?<user_id>", rank = 1)]
-pub(crate) async fn all_nba_teams(user_id: String) -> Json<NBATeams> {
+pub(crate) async fn all_nba_teams(user_id: String) -> Result<Json<SuccessResponses<Vec<NBATeams>>>, Error> {
     let teams = Model::get_all_teams(user_id).await;
 
-    Json(NBATeams {
-        _id: teams[0]._id.clone(),
-        teams: teams[0].teams.clone(),
-    })
+   if teams.len() == 0 {
+     Err(ErrorResponse::create_404_error("Teams, not found"))
+   } else {
+    Ok(Json(SuccessResponses {
+      status: Status::Ok.to_string(),
+      data: teams
+    }))
+   }
 }
 
 #[get("/teams/<team_name>?<user_id>")]
