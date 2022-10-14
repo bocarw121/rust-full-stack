@@ -15,7 +15,7 @@ pub async fn client() -> Client {
 async fn client_options(uri: String) -> ClientOptions {
     let mut client_options = match ClientOptions::parse(uri).await {
         Ok(client_options) => client_options,
-        Err(e) => panic!("Error with uri {}", e),
+        Err(e) => panic!("Error with uri in client {}", e),
     };
 
     // Manually set an option.

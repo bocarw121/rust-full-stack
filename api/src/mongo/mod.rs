@@ -126,7 +126,8 @@ impl Model {
 
         let fav_teams = match collection.find(doc! {"_id": user_id}, None).await {
             Ok(cursor) => cursor,
-            Err(_) => panic!("Error getting favorite teams"),
+            // Return an empty array if there is and error
+            Err(_) => return vec![]
         };
 
         fav_teams.try_collect().await.unwrap_or_else(|_| vec![])

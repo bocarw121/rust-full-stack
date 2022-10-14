@@ -7,7 +7,7 @@ pub async fn get_length_of_team() -> u32 {
     // find all teams  if not just return and empty vec
     let cursor = match collection.find(None, None).await {
         Ok(cursor) => cursor,
-        Err(_) => panic!("Error finding teams"),
+        Err(_) => return 0,
     };
 
     // collect the cursor into a vector
