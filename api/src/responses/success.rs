@@ -3,11 +3,6 @@ use serde::Serialize;
 use types::{Team, NBATeams};
 
 
-// #[derive(Debug,Serialize)]
-// pub struct SuccessResponse {
-//   pub  status: String,
-//   pub  message: String,
-// }
 
 
 #[derive(Debug,Serialize, Responder)]

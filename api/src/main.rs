@@ -16,7 +16,7 @@ fn rocket() -> _ {
         routes![
             initialize_nba_teams,
             all_nba_teams,
-            get_team_by_name,
+            get_one_team,
             post_favorite_team,
             get_favorite_teams,
             update_one_team,

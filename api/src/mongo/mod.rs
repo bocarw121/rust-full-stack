@@ -58,15 +58,12 @@ pub async fn generate_nba_teams(id: String) {
         cursor.try_collect().await.unwrap_or_else(|_| vec![])
     }
 
-    pub async fn get_one_team(name: String, user_id: String) -> Result<Team, Message> {
+    pub async fn get_one_team(name: String, user_id: String) -> Result<Team, String> {
         
         let doc = doc! {"_id": user_id};
            let cursor = match team_collection().await.find(doc, None).await {
             Ok(cursor) => cursor,
-            Err(_) => return Err(Message {
-                status: Status::NotFound.to_string(),
-                message: "Team not found".to_owned()
-            })
+            Err(_) => return Err("User not found".to_string())
         };
         let team_iter = cursor
             .try_collect()
@@ -78,10 +75,7 @@ pub async fn generate_nba_teams(id: String) {
         
         let team = match team_vec.into_iter().find(|team| team.name.to_lowercase() == name.to_lowercase())  {
             Some(team) => team,
-            None => return Err(Message {
-                status: Status::NotFound.to_string(),
-                message: "Team not found".to_owned()
-            })
+            None => return Err("Team not found".to_string())
         }; 
    
      Ok(team)

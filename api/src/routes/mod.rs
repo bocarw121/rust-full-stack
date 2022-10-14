@@ -33,13 +33,18 @@ pub(crate) async fn all_nba_teams(user_id: String) -> Result<Json<SuccessRespons
 }
 
 #[get("/teams/<team_name>?<user_id>")]
-pub(crate) async fn get_team_by_name(team_name:String, user_id: String) -> Result<Json<Team>, String> {
+pub(crate) async fn get_one_team(team_name:String, user_id: String) -> Result<Json<SuccessResponses<Team>>, Error> {
     let team = match Model::get_one_team(team_name, user_id).await {
-        Ok(team) => team,
-        Err(_) => return Err("Team not found".to_owned())
+        Ok(team) => Ok(Json(SuccessResponses {
+      status: Status::Ok.to_string(),
+      data: team
+    })),
+        // Capture the error from get_one_team
+        Err(e) => return Err(ErrorResponse::create_404_error(&e))
     };
 
-    Ok(Json(team))
+    team
+
 }
 
 // Post  Favorite teams
@@ -53,12 +58,17 @@ pub async fn post_favorite_team(fav_team: Json<FavTeamPayload>) -> Json<Message>
 
 // Whole favorites team collection
 #[get("/favorite?<user_id>")]
-pub async fn get_favorite_teams(user_id: String) -> Json<Vec<FavTeam>> {
-    let favorite_teams = Model::get_all_favorite_teams(user_id).await;
+pub async fn get_favorite_teams(user_id: String) -> Result<Json<SuccessResponses<Vec<FavTeam>>>, Error> {
+    let favorite_teams  = Model::get_all_favorite_teams(user_id).await;
 
-    println!("{:?}", favorite_teams);
+    if favorite_teams.len() == 0 {
+        Err(ErrorResponse::create_404_error("No favorite teams selected"))
+    } else {
+         Ok(Json(SuccessResponses { status: Status::Ok.to_string(), data: favorite_teams }))
+    }
 
-    Json(favorite_teams)
+ 
+   
 }
 
 
