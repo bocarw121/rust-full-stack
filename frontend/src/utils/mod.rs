@@ -1,7 +1,15 @@
 use gloo_storage::{LocalStorage, Storage};
 use reqwasm::http::Request;
+use serde::{Serialize, Deserialize};
 use types::{FavTeamPayload, NBATeams, Team};
 use uuid::Uuid;
+
+
+#[derive(Debug,Deserialize)]
+pub struct JsonResponse<T> {
+ pub status: String,
+ pub data: T
+}
 
 pub struct Fetch;
 
@@ -13,9 +21,8 @@ impl Fetch {
             Err(_) => panic!("Error fetching data"),
         };
 
-        log::info!("Initialize {:?}", res.status().to_string());
     }
-    pub async fn get_teams() -> NBATeams {
+    pub async fn get_teams() -> JsonResponse<Vec<NBATeams>> {
         let user_id = User::get_user_id();
         let url = format!("/nba/teams?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
@@ -25,7 +32,7 @@ impl Fetch {
             }
         };
 
-        let teams: NBATeams = match res.json().await {
+        let teams: JsonResponse<Vec<NBATeams>>  = match res.json().await {
             Ok(teams) => teams,
             Err(_) => panic!("Error fetching data"),
         };
@@ -60,13 +67,14 @@ impl Fetch {
         };
     }
 
-    pub async fn get_team(url: String) -> Team {
+
+    pub async fn get_team(url: String) -> JsonResponse<Team> {
         let res = match Request::get(&url).send().await {
             Ok(res) => res,
             Err(_) => panic!("Error fetching data"),
         };
 
-        let team: Team = match res.json().await {
+        let team = match res.json().await {
             Ok(team) => team,
             Err(_) => panic!("Error fetching data"),
         };

@@ -33,7 +33,7 @@ pub fn team(props: &Props) -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     let fetched_team = Fetch::get_team(path.clone()).await;
 
-                    team.set(fetched_team.clone());
+                    team.set(fetched_team.data.clone());
                 });
                 || ()
             },
