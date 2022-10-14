@@ -3,9 +3,9 @@ extern crate rocket;
 
 pub mod mongo;
 pub mod nba;
+pub mod responses;
 pub mod routes;
 pub mod utils;
-pub mod responses;
 use routes::*;
 
 #[launch]

@@ -14,7 +14,7 @@ pub fn favorite_teams() -> Html {
                 wasm_bindgen_futures::spawn_local(async move {
                     let fetched_team = Fetch::get_fav_teams().await;
 
-                    fav_teams.set(fetched_team.to_owned())
+                    fav_teams.set(fetched_team.data.to_owned())
                 });
                 || ()
             },

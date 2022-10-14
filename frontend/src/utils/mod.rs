@@ -15,7 +15,7 @@ pub struct Fetch;
 
 impl Fetch {
     pub async fn initialize_teams(user_id: String) {
-        let url = format!("/nba/teams/insert?user_id={}", user_id);
+        let url = format!("/nba/teams/initialize?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
             Ok(res) => res,
             Err(_) => panic!("Error fetching data"),
@@ -40,7 +40,7 @@ impl Fetch {
         teams
     }
 
-    pub async fn get_fav_teams() -> Vec<types::FavTeam> {
+    pub async fn get_fav_teams() -> JsonResponse<Vec<types::FavTeam>>{
         let user_id = User::get_user_id();
         let url = format!("/nba/favorite?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
@@ -50,7 +50,7 @@ impl Fetch {
             }
         };
 
-        let teams: Vec<types::FavTeam> = match res.json().await {
+        let teams = match res.json().await {
             Ok(teams) => teams,
             Err(_) => panic!("Error fetching data"),
         };
