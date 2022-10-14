@@ -1,21 +1,28 @@
 use gloo_storage::{LocalStorage, Storage};
 use reqwasm::http::Request;
+use serde::{Serialize, Deserialize};
 use types::{FavTeamPayload, NBATeams, Team};
 use uuid::Uuid;
+
+
+#[derive(Debug,Deserialize)]
+pub struct JsonResponse<T> {
+ pub status: String,
+ pub data: T
+}
 
 pub struct Fetch;
 
 impl Fetch {
     pub async fn initialize_teams(user_id: String) {
-        let url = format!("/nba/teams/insert?user_id={}", user_id);
+        let url = format!("/nba/teams/initialize?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
             Ok(res) => res,
             Err(_) => panic!("Error fetching data"),
         };
 
-        log::info!("Initialize {:?}", res.status().to_string());
     }
-    pub async fn get_teams() -> NBATeams {
+    pub async fn get_teams() -> JsonResponse<Vec<NBATeams>> {
         let user_id = User::get_user_id();
         let url = format!("/nba/teams?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
@@ -25,7 +32,7 @@ impl Fetch {
             }
         };
 
-        let teams: NBATeams = match res.json().await {
+        let teams: JsonResponse<Vec<NBATeams>>  = match res.json().await {
             Ok(teams) => teams,
             Err(_) => panic!("Error fetching data"),
         };
@@ -33,7 +40,7 @@ impl Fetch {
         teams
     }
 
-    pub async fn get_fav_teams() -> Vec<types::FavTeam> {
+    pub async fn get_fav_teams() -> JsonResponse<Vec<types::FavTeam>>{
         let user_id = User::get_user_id();
         let url = format!("/nba/favorite?user_id={}", user_id);
         let res = match Request::get(&url).send().await {
@@ -43,7 +50,7 @@ impl Fetch {
             }
         };
 
-        let teams: Vec<types::FavTeam> = match res.json().await {
+        let teams = match res.json().await {
             Ok(teams) => teams,
             Err(_) => panic!("Error fetching data"),
         };
@@ -60,13 +67,14 @@ impl Fetch {
         };
     }
 
-    pub async fn get_team(url: String) -> Team {
+
+    pub async fn get_team(url: String) -> JsonResponse<Team> {
         let res = match Request::get(&url).send().await {
             Ok(res) => res,
             Err(_) => panic!("Error fetching data"),
         };
 
-        let team: Team = match res.json().await {
+        let team = match res.json().await {
             Ok(team) => team,
             Err(_) => panic!("Error fetching data"),
         };
